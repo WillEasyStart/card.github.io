@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestseller Card Customizer</title>
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header styles */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    /* Grid layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* Control panel styles */
+    .control-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: sticky;
+      top: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .panel-header svg {
+      width: 24px;
+      height: 24px;
+      color: #3b82f6;
+    }
+
+    .panel-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    /* Tab navigation */
+    .tab-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 30px;
+    }
+
+    .tab-button {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-button:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-color: #3b82f6;
+      color: white;
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .tab-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Tab content */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform | translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .color-input {
+      height: 50px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .gradient-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Button styles */
+    .button-group {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #f1f5f9;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    .btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Preview section */
+    .preview-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+
+    .card-container {
+      perspective: 1000px;
+    }
+
+    .card-preview {
+      width: 600px;
+      height: 800px;
+      background: white;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .card-preview:hover {
+      transform: rotateY(5deg) rotateX(5deg);
+    }
+
+    /* Card elements */
+    .gradient-bg {
+      position: absolute;
+      width: 316px;
+      height: 521px;
+      left: 226px;
+      top: 207px;
+      border-radius: 55px;
+      filter: blur(12px);
+    }
+
+    .digital-text {
+      position: absolute;
+      left: 243px;
+      top: 39px;
+      width: 115px;
+      height: 26px;
+      font-family: system-ui, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 3.12px;
+      opacity: 0.6;
+      mix-blend-mode: hard-light;
+      line-height: 1;
+    }
+
+    .bestseller-text {
+      position: absolute;
+      left: 75px;
+      top: 77px;
+      width: 448px;
+      height: 80px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #28F29C 25%, #0CB8E0 75%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.25));
+    }
+
+    .step-badge {
+      position: absolute;
+      width: 77px;
+      height: 80px;
+    }
+
+    .step-text {
+      position: absolute;
+      font-family: system-ui, sans-serif;
+      font-size: 23px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .product-image {
+      position: absolute;
+      left: 190px;
+      top: 262px;
+      width: 302px;
+      height: 410px;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .author-section {
+      position: absolute;
+      left: 218px;
+      top: 747px;
+      width: 163px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+    }
+
+    .author-image {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+      padding: 2px;
+      object-fit: cover;
+    }
+
+    .author-info {
+      margin-left: 8px;
+    }
+
+    .author-name {
+      font-family: Inter, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.27;
+      letter-spacing: 0.16px;
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .author-website {
+      color: #8F8F8E;
+      font-family: Inter, sans-serif;
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.095px;
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      margin-top: 2px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 1200px) {
+      .main-grid {
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+      }
+
+      .card-preview {
+        transform: scale(0.8);
+        transform-origin: center;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .control-panel {
+        position: static;
+      }
+
+      .card-preview {
+        transform: scale(0.7);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .tab-nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .card-preview {
+        transform: scale(0.5);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .control-panel {
+        padding: 20px;
+      }
+
+      .card-preview {
+        transform: scale(0.4);
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      margin: -20px 0 0 -20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Bestseller Card Customizer</h1>
+      <p>Create stunning digital bestseller cards with real-time customization</p>
+    </div>
+
+    <div class="main-grid">
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <div class="panel-header">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+            </path>
+          </svg>
+          <h2>Customize Your Card</h2>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+          <button class="tab-button active" data-tab="text" title="Text Content">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
+            </svg>
+          </button>
+          <button class="tab-button" data-tab="colors" title="Colors & Theme">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+              </path>
+            </svg>
+          </button>
+          <button class="tab-button" data-tab="images" title="Images">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+              </path>
+            </svg>
+          </button>
+          <button class="tab-button" data-tab="author" title="Author Info">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="text" class="tab-content active">
+          <div class="form-group">
+            <label class="form-label">Digital Text</label>
+            <input type="text" id="digitalText" class="form-input" value="DIGITAL" placeholder="Enter digital text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bestseller Text</label>
+            <input type="text" id="bestsellerText" class="form-input" value="BESTSELLER"
+              placeholder="Enter bestseller text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Step 1 Text</label>
+            <input type="text" id="step1Text" class="form-input" value="Start" placeholder="Enter step 1 text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Step 2 Text</label>
+            <input type="text" id="step2Text" class="form-input" value="Monetize" placeholder="Enter step 2 text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Step 3 Text</label>
+            <input type="text" id="step3Text" class="form-input" value="Scale" placeholder="Enter step 3 text">
+          </div>
+        </div>
+
+        <div id="colors" class="tab-content">
+          <div class="form-group">
+            <label class="form-label">Card Background</label>
+            <input type="color" id="backgroundColor" class="form-input color-input" value="#FFFFFF">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Digital Text Color</label>
+            <input type="color" id="digitalTextColor" class="form-input color-input" value="#121212">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gradient Colors</label>
+            <div class="gradient-group">
+              <div>
+                <label class="form-label">Start Color</label>
+                <input type="color" id="gradientStart" class="form-input color-input" value="#28F29C">
+              </div>
+              <div>
+                <label class="form-label">End Color</label>
+                <input type="color" id="gradientEnd" class="form-input color-input" value="#0CB8E0">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="images" class="tab-content">
+          <div class="form-group">
+            <label class="form-label">Product Image URL</label>
+            <input type="url" id="productImage" class="form-input"
+              value="https://cdn.builder.io/api/v1/image/assets/TEMP/e3ee34221ad0e3b583e184808ab92b49ee6e7ce8?width=604"
+              placeholder="Enter product image URL">
+          </div>
+        </div>
+
+        <div id="author" class="tab-content">
+          <div class="form-group">
+            <label class="form-label">Author Name</label>
+            <input type="text" id="authorName" class="form-input" value="Will Napolini" placeholder="Enter author name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author Website</label>
+            <input type="text" id="authorWebsite" class="form-input" value="willonsuccess.com"
+              placeholder="Enter website">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author Image URL</label>
+            <input type="url" id="authorImage" class="form-input"
+              value="https://avatars.githubusercontent.com/u/192521042?v=4" placeholder="Enter author image URL">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          <button id="downloadBtn" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Download High-Quality PNG
+          </button>
+          <button id="resetBtn" class="btn btn-secondary">
+            Reset to Defaults
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="preview-section">
+        <div class="card-container">
+          <div id="cardPreview" class="card-preview">
+            <!-- Gradient Background -->
+            <div id="gradientBg" class="gradient-bg"></div>
+
+            <!-- Digital Text -->
+            <div id="digitalTextEl" class="digital-text">DIGITAL</div>
+
+            <!-- Bestseller Text -->
+            <div class="bestseller-text">
+              <svg width="448" height="80" viewBox="0 0 448 80" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="25%" stop-color="#28F29C" />
+                    <stop offset="75%" stop-color="#0CB8E0" />
+                  </linearGradient>
+                  <filter id="shadow" x="-50%" y="-50%" width="150%" height="150%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0, 0, 0, 0.25)" />
+                  </filter>
+                </defs>
+                <text id="bestsellerTextEl" x="50%" y="56" text-anchor="middle" fill="url(#textGradient)" 
+                      font-size="80" font-family="system-ui, sans-serif" font-weight="700" 
+                      letter-spacing="-3.2px" filter="url(#shadow)" style="text-transform: uppercase;">
+                  BESTSELLER
+                </text>
+              </svg>
+            </div>
+
+            <!-- Step Badges -->
+            <div class="step-badge" style="left: 68px; top: 258px;">
+              <svg width="77" height="80" viewBox="0 0 77 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M38.5 0C42.5227 0 45.4715 6.38484 49.101 7.54532C52.8626 8.74837 59.0527 5.33111 62.1836 7.57486C65.3471 9.84116 63.9471 16.7077 66.2475 19.8212C68.5265 22.9042 75.6051 23.7027 76.8266 27.4064C78.0047 30.9799 72.7937 35.7061 72.7937 39.6667C72.7937 43.6273 78.0047 48.3534 76.8262 51.9267C75.6051 55.6304 68.5267 56.4291 66.2471 59.5119C63.945 62.6257 65.3462 69.4939 62.1831 71.7584C59.0515 74.0021 52.8621 70.5847 49.1001 71.788C45.4715 72.9482 42.5227 79.3333 38.5 79.3333C34.4773 79.3333 31.5285 72.9482 27.899 71.788C24.1374 70.5847 17.9477 74.0021 14.8164 71.7584C11.6533 69.4918 13.0532 62.6257 10.7523 59.5119C8.47341 56.4291 1.39518 55.6304 0.173309 51.9267C-1.00448 48.3534 4.20656 43.6273 4.20656 39.6667C4.20656 35.7061 -1.00448 30.9799 0.174192 27.4064C1.39518 23.7027 8.47341 22.9042 10.7532 19.8212C13.055 16.7077 11.6542 9.83943 14.8173 7.57486C17.9486 5.33111 24.1383 8.74837 27.8999 7.54532C31.5285 6.38484 34.4773 0 38.5 0Z"
+                  fill="url(#paint0_linear_start)" />
+                <path
+                  d="M25.9495 39.3795C24.5826 38.0128 22.3666 38.0128 20.9997 39.3795C19.6329 40.7463 19.6329 42.9625 20.9997 44.3294L25.9495 39.3795ZM20.9997 44.3294L32.6664 55.9961L37.6161 51.0461L25.9495 39.3795L20.9997 44.3294Z"
+                  fill="white" />
+                <path
+                  d="M56.0005 32.6624C57.3673 31.2955 57.3673 29.0793 56.0005 27.7125C54.6336 26.3458 52.4176 26.3458 51.0508 27.7125L56.0005 32.6624ZM35.0005 53.6624L56.0005 32.6624L51.0508 27.7125L30.0508 48.7125L35.0005 53.6624Z"
+                  fill="white" />
+                <defs>
+                  <linearGradient id="paint0_linear_start" x1="19.2617" y1="19.8204" x2="58.9107" y2="58.3044"
+                    gradientUnits="userSpaceOnUse">
+                    <stop class="gradient-start" stop-color="#28F29C" />
+                    <stop class="gradient-end" offset="1" stop-color="#0CB8E0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div id="step1TextEl" class="step-text gradient-text" style="left: 80px; top: 346px;">Start</div>
+
+            <div class="step-badge" style="left: 68px; top: 415px;">
+              <svg width="77" height="80" viewBox="0 0 77 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M38.5 0C42.5227 0 45.4715 6.38484 49.101 7.54532C52.8626 8.74837 59.0527 5.33111 62.1836 7.57486C65.3471 9.84116 63.9471 16.7077 66.2475 19.8212C68.5265 22.9042 75.6051 23.7027 76.8266 27.4064C78.0047 30.9799 72.7937 35.7061 72.7937 39.6667C72.7937 43.6273 78.0047 48.3534 76.8262 51.9267C75.6051 55.6304 68.5267 56.4291 66.2471 59.5119C63.945 62.6257 65.3462 69.4939 62.1831 71.7584C59.0515 74.0021 52.8621 70.5847 49.1001 71.788C45.4715 72.9482 42.5227 79.3333 38.5 79.3333C34.4773 79.3333 31.5285 72.9482 27.899 71.788C24.1374 70.5847 17.9477 74.0021 14.8164 71.7584C11.6533 69.4918 13.0532 62.6257 10.7523 59.5119C8.47341 56.4291 1.39518 55.6304 0.173309 51.9267C-1.00448 48.3534 4.20656 43.6273 4.20656 39.6667C4.20656 35.7061 -1.00448 30.9799 0.174192 27.4064C1.39518 23.7027 8.47341 22.9042 10.7532 19.8212C13.055 16.7077 11.6542 9.83943 14.8173 7.57486C17.9486 5.33111 24.1383 8.74837 27.8999 7.54532C31.5285 6.38484 34.4773 0 38.5 0Z"
+                  fill="url(#paint0_linear_monetize)" />
+                <path
+                  d="M25.9495 39.3795C24.5826 38.0128 22.3666 38.0128 20.9997 39.3795C19.6329 40.7463 19.6329 42.9625 20.9997 44.3294L25.9495 39.3795ZM20.9997 44.3294L32.6664 55.9961L37.6161 51.0461L25.9495 39.3795L20.9997 44.3294Z"
+                  fill="white" />
+                <path
+                  d="M56.0005 32.6624C57.3673 31.2955 57.3673 29.0793 56.0005 27.7125C54.6336 26.3458 52.4176 26.3458 51.0508 27.7125L56.0005 32.6624ZM35.0005 53.6624L56.0005 32.6624L51.0508 27.7125L30.0508 48.7125L35.0005 53.6624Z"
+                  fill="white" />
+                <defs>
+                  <linearGradient id="paint0_linear_monetize" x1="19.2617" y1="19.8204" x2="58.9107" y2="58.3044"
+                    gradientUnits="userSpaceOnUse">
+                    <stop class="gradient-start" stop-color="#28F29C" />
+                    <stop class="gradient-end" offset="1" stop-color="#0CB8E0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div id="step2TextEl" class="step-text gradient-text" style="left: 58px; top: 503px;">Monetize</div>
+
+            <div class="step-badge" style="left: 68px; top: 572px;">
+              <svg width="77" height="80" viewBox="0 0 77 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M38.5 0C42.5227 0 45.4715 6.38484 49.101 7.54532C52.8626 8.74837 59.0527 5.33111 62.1836 7.57486C65.3471 9.84116 63.9471 16.7077 66.2475 19.8212C68.5265 22.9042 75.6051 23.7027 76.8266 27.4064C78.0047 30.9799 72.7937 35.7061 72.7937 39.6667C72.7937 43.6273 78.0047 48.3534 76.8262 51.9267C75.6051 55.6304 68.5267 56.4291 66.2471 59.5119C63.945 62.6257 65.3462 69.4939 62.1831 71.7584C59.0515 74.0021 52.8621 70.5847 49.1001 71.788C45.4715 72.9482 42.5227 79.3333 38.5 79.3333C34.4773 79.3333 31.5285 72.9482 27.899 71.788C24.1374 70.5847 17.9477 74.0021 14.8164 71.7584C11.6533 69.4918 13.0532 62.6257 10.7523 59.5119C8.47341 56.4291 1.39518 55.6304 0.173309 51.9267C-1.00448 48.3534 4.20656 43.6273 4.20656 39.6667C4.20656 35.7061 -1.00448 30.9799 0.174192 27.4064C1.39518 23.7027 8.47341 22.9042 10.7532 19.8212C13.055 16.7077 11.6542 9.83943 14.8173 7.57486C17.9486 5.33111 24.1383 8.74837 27.8999 7.54532C31.5285 6.38484 34.4773 0 38.5 0Z"
+                  fill="url(#paint0_linear_scale)" />
+                <path
+                  d="M25.9495 39.3795C24.5826 38.0128 22.3666 38.0128 20.9997 39.3795C19.6329 40.7463 19.6329 42.9625 20.9997 44.3294L25.9495 39.3795ZM20.9997 44.3294L32.6664 55.9961L37.6161 51.0461L25.9495 39.3795L20.9997 44.3294Z"
+                  fill="white" />
+                <path
+                  d="M56.0005 32.6624C57.3673 31.2955 57.3673 29.0793 56.0005 27.7125C54.6336 26.3458 52.4176 26.3458 51.0508 27.7125L56.0005 32.6624ZM35.0005 53.6624L56.0005 32.6624L51.0508 27.7125L30.0508 48.7125L35.0005 53.6624Z"
+                  fill="white" />
+                <defs>
+                  <linearGradient id="paint0_linear_scale" x1="19.2617" y1="19.8204" x2="58.9107" y2="58.3044"
+                    gradientUnits="userSpaceOnUse">
+                    <stop class="gradient-start" stop-color="#28F29C" />
+                    <stop class="gradient-end" offset="1" stop-color="#0CB8E0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div id="step3TextEl" class="step-text gradient-text" style="left: 77px; top: 660px;">Scale</div>
+
+            <!-- Product Image -->
+            <div class="product-image">
+              <img id="productImageEl"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e3ee34221ad0e3b583e184808ab92b49ee6e7ce8?width=604"
+                alt="Product" crossorigin="anonymous">
+            </div>
+
+            <!-- Author Section -->
+            <div class="author-section">
+              <img id="authorImageEl" src="https://avatars.githubusercontent.com/u/192521042?v=4" alt="Author"
+                class="author-image" crossorigin="anonymous">
+              <div class="author-info">
+                <div class="author-name gradient-text">
+                  <span id="authorNameEl">Will Napolini</span>
+                  <svg width="18" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));">
+                    <path
+                      d="M9.22059 0C10.184 0 10.8902 1.52914 11.7595 1.80707C12.6604 2.0952 14.1429 1.27678 14.8927 1.81415C15.6504 2.35692 15.3151 4.00143 15.866 4.74709C16.4118 5.48546 18.1071 5.6767 18.3997 6.56372C18.6818 7.41956 17.4338 8.55145 17.4338 9.5C17.4338 10.4485 18.6818 11.5804 18.3995 12.4362C18.1071 13.3232 16.4119 13.5145 15.8659 14.2529C15.3146 14.9986 15.6501 16.6435 14.8926 17.1858C14.1426 17.7232 12.6603 16.9047 11.7593 17.1929C10.8902 17.4708 10.184 19 9.22059 19C8.25718 19 7.55094 17.4708 6.68169 17.1929C5.78081 16.9047 4.2984 17.7232 3.54846 17.1858C2.79091 16.643 3.12619 14.9986 2.57512 14.2529C2.02935 13.5145 0.33414 13.3232 0.0415068 12.4362C-0.240569 11.5804 1.00745 10.4485 1.00745 9.5C1.00745 8.55145 -0.240569 7.41956 0.0417182 6.56372C0.33414 5.6767 2.02935 5.48546 2.57534 4.74709C3.12661 4.00143 2.79112 2.3565 3.54867 1.81415C4.29862 1.27678 5.78103 2.0952 6.68191 1.80707C7.55094 1.52914 8.25718 0 9.22059 0Z"
+                      fill="url(#paint0_linear_author)" />
+                    <path
+                      d="M6.21416 9.43102C5.8868 9.10372 5.35607 9.10372 5.02872 9.43102C4.70136 9.75838 4.70136 10.2892 5.02872 10.6165L6.21416 9.43102ZM5.02872 10.6165L7.82284 13.4106L9.00827 12.2251L6.21416 9.43102L5.02872 10.6165Z"
+                      fill="white" />
+                    <path
+                      d="M13.4121 7.82257C13.7395 7.49521 13.7395 6.96444 13.4121 6.63708C13.0848 6.30978 12.554 6.30978 12.2267 6.63708L13.4121 7.82257ZM8.3827 12.852L13.4121 7.82257L12.2267 6.63708L7.19727 11.6665L8.3827 12.852Z"
+                      fill="white" />
+                    <defs>
+                      <linearGradient id="paint0_linear_author" x1="4.61309" y1="4.74691" x2="14.1089" y2="13.9637"
+                        gradientUnits="userSpaceOnUse">
+                        <stop class="gradient-start" stop-color="#28F29C" />
+                        <stop class="gradient-end" offset="1" stop-color="#0CB8E0" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div id="authorWebsiteEl" class="author-website">willonsuccess.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Application state
+    const state = {
+      digitalText: "DIGITAL",
+      bestsellerText: "BESTSELLER",
+      step1Text: "Start",
+      step2Text: "Monetize",
+      step3Text: "Scale",
+      authorName: "Will Napolini",
+      authorWebsite: "willonsuccess.com",
+      authorImage: "https://avatars.githubusercontent.com/u/192521042?v=4",
+      productImage: "https://cdn.builder.io/api/v1/image/assets/TEMP/e3ee34221ad0e3b583e184808ab92b49ee6e7ce8?width=604",
+      backgroundColor: "#FFFFFF",
+      digitalTextColor: "#121212",
+      gradientStart: "#28F29C",
+      gradientEnd: "#0CB8E0"
+    };
+
+    // DOM elements cache
+    const elements = {};
+
+    // Initialize DOM elements
+    function cacheElements() {
+      // Input elements
+      elements.digitalText = document.getElementById('digitalText');
+      elements.bestsellerText = document.getElementById('bestsellerText');
+      elements.step1Text = document.getElementById('step1Text');
+      elements.step2Text = document.getElementById('step2Text');
+      elements.step3Text = document.getElementById('step3Text');
+      elements.authorName = document.getElementById('authorName');
+      elements.authorWebsite = document.getElementById('authorWebsite');
+      elements.authorImage = document.getElementById('authorImage');
+      elements.productImage = document.getElementById('productImage');
+      elements.backgroundColor = document.getElementById('backgroundColor');
+      elements.digitalTextColor = document.getElementById('digitalTextColor');
+      elements.gradientStart = document.getElementById('gradientStart');
+      elements.gradientEnd = document.getElementById('gradientEnd');
+
+      // Preview elements
+      elements.cardPreview = document.getElementById('cardPreview');
+      elements.digitalTextEl = document.getElementById('digitalTextEl');
+      elements.bestsellerTextEl = document.getElementById('bestsellerTextEl');
+      elements.step1TextEl = document.getElementById('step1TextEl');
+      elements.step2TextEl = document.getElementById('step2TextEl');
+      elements.step3TextEl = document.getElementById('step3TextEl');
+      elements.authorNameEl = document.getElementById('authorNameEl');
+      elements.authorWebsiteEl = document.getElementById('authorWebsiteEl');
+      elements.authorImageEl = document.getElementById('authorImageEl');
+      elements.productImageEl = document.getElementById('productImageEl');
+      elements.gradientBg = document.getElementById('gradientBg');
+
+      // Gradient SVG elements
+      elements.textGradient = document.getElementById('textGradient');
+      elements.step1Gradient = document.getElementById('paint0_linear_start');
+      elements.step2Gradient = document.getElementById('paint0_linear_monetize');
+      elements.step3Gradient = document.getElementById('paint0_linear_scale');
+      elements.authorGradient = document.getElementById('paint0_linear_author');
+
+      // Button elements
+      elements.downloadBtn = document.getElementById('downloadBtn');
+      elements.resetBtn = document.getElementById('resetBtn');
+    }
+
+    // Tab functionality
+    function initializeTabs() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetTab = button.getAttribute('data-tab');
+
+          // Remove active classes
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+
+          // Add active classes
+          button.classList.add('active');
+          document.getElementById(targetTab).classList.add('active');
+        });
+      });
+    }
+
+    // Update gradient colors
+    function updateGradients() {
+      // Update gradient background
+      elements.gradientBg.style.background = `linear-gradient(135deg, ${state.gradientStart} 25%, ${state.gradientEnd} 75%)`;
+
+      // Update SVG gradients
+      const gradients = [
+        elements.textGradient,
+        elements.step1Gradient,
+        elements.step2Gradient,
+        elements.step3Gradient,
+        elements.authorGradient
+      ];
+
+      gradients.forEach(gradient => {
+        const stops = gradient.getElementsByTagName('stop');
+        stops[0].setAttribute('stop-color', state.gradientStart);
+        stops[1].setAttribute('stop-color', state.gradientEnd);
+      });
+
+      // Update CSS gradient text
+      const gradientTexts = document.querySelectorAll('.gradient-text');
+      gradientTexts.forEach(text => {
+        text.style.background = `linear-gradient(135deg, ${state.gradientStart} 25%, ${state.gradientEnd} 75%)`;
+        text.style.webkitBackgroundClip = 'text';
+        text.style.backgroundClip = 'text';
+        text.style.webkitTextFillColor = 'transparent';
+        text.style.color = 'transparent';
+      });
+
+      // Update author image border gradient
+      elements.authorImageEl.style.background = `linear-gradient(135deg, ${state.gradientStart} 25%, ${state.gradientEnd} 75%)`;
+    }
+
+    // Update preview card
+    function updatePreview() {
+      requestAnimationFrame(() => {
+        // Update text content
+        elements.digitalTextEl.textContent = state.digitalText;
+        elements.bestsellerTextEl.textContent = state.bestsellerText;
+        elements.step1TextEl.textContent = state.step1Text;
+        elements.step2TextEl.textContent = state.step2Text;
+        elements.step3TextEl.textContent = state.step3Text;
+        elements.authorNameEl.textContent = state.authorName;
+        elements.authorWebsiteEl.textContent = state.authorWebsite;
+
+        // Update images
+        if (state.authorImage) {
+          elements.authorImageEl.src = state.authorImage;
+          elements.authorImageEl.alt = state.authorName;
+        }
+
+        if (state.productImage) {
+          elements.productImageEl.src = state.productImage;
+        }
+
+        // Update colors
+        elements.cardPreview.style.backgroundColor = state.backgroundColor;
+        elements.digitalTextEl.style.color = state.digitalTextColor;
+
+        // Update gradients
+        updateGradients();
+      });
+    }
+
+    // Input event handlers
+    function setupInputHandlers() {
+      // Text inputs
+      elements.digitalText.addEventListener('input', debounce((e) => {
+        state.digitalText = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.bestsellerText.addEventListener('input', debounce((e) => {
+        state.bestsellerText = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.step1Text.addEventListener('input', debounce((e) => {
+        state.step1Text = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.step2Text.addEventListener('input', debounce((e) => {
+        state.step2Text = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.step3Text.addEventListener('input', debounce((e) => {
+        state.step3Text = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.authorName.addEventListener('input', debounce((e) => {
+        state.authorName = e.target.value;
+        updatePreview();
+      }, 100));
+
+      elements.authorWebsite.addEventListener('input', debounce((e) => {
+        state.authorWebsite = e.target.value;
+        updatePreview();
+      }, 100));
+
+      // Image inputs
+      elements.authorImage.addEventListener('input', debounce((e) => {
+        state.authorImage = e.target.value;
+        updatePreview();
+      }, 300));
+
+      elements.productImage.addEventListener('input', debounce((e) => {
+        state.productImage = e.target.value;
+        updatePreview();
+      }, 300));
+
+      // Color inputs
+      elements.backgroundColor.addEventListener('input', (e) => {
+        state.backgroundColor = e.target.value;
+        updatePreview();
+      });
+
+      elements.digitalTextColor.addEventListener('input', (e) => {
+        state.digitalTextColor = e.target.value;
+        updatePreview();
+      });
+
+      elements.gradientStart.addEventListener('input', (e) => {
+        state.gradientStart = e.target.value;
+        updatePreview();
+      });
+
+      elements.gradientEnd.addEventListener('input', (e) => {
+        state.gradientEnd = e.target.value;
+        updatePreview();
+      });
+    }
+
+    // Download functionality
+    async function downloadCard() {
+      const button = elements.downloadBtn;
+      const originalText = button.innerHTML;
+
+      try {
+        // Show loading state
+        button.innerHTML = '<div style="width: 20px; height: 20px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div> Generating...';
+        button.disabled = true;
+
+        // Generate image
+        const dataUrl = await htmlToImage.toPng(elements.cardPreview, {
+          quality: 1,
+          pixelRatio: 3,
+          backgroundColor: null,
+          cacheBust: true,
+          width: 600,
+          height: 800,
+          style: {
+            transform: 'scale(1)',
+            transformOrigin: 'top left'
+          }
+        });
+
+        // Download image
+        const link = document.createElement('a');
+        link.download = `bestseller-card-${Date.now()}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Success feedback
+        button.innerHTML = '✓ Downloaded Successfully!';
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }, 2000);
+
+      } catch (error) {
+        console.error('Download failed:', error);
+        button.innerHTML = '❌ Download Failed';
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }, 2000);
+
+        // Fallback: suggest manual screenshot
+        alert('Download failed. Please take a screenshot of the card instead.');
+      }
+    }
+
+    // Reset functionality
+    function resetToDefaults() {
+      // Reset state
+      state.digitalText = "DIGITAL";
+      state.bestsellerText = "BESTSELLER";
+      state.step1Text = "Start";
+      state.step2Text = "Monetize";
+      state.step3Text = "Scale";
+      state.authorName = "Will Napolini";
+      state.authorWebsite = "willonsuccess.com";
+      state.authorImage = "https://avatars.githubusercontent.com/u/192521042?v=4";
+      state.productImage = "https://cdn.builder.io/api/v1/image/assets/TEMP/e3ee34221ad0e3b583e184808ab92b49ee6e7ce8?width=604";
+      state.backgroundColor = "#FFFFFF";
+      state.digitalTextColor = "#121212";
+      state.gradientStart = "#28F29C";
+      state.gradientEnd = "#0CB8E0";
+
+      // Reset input values
+      elements.digitalText.value = state.digitalText;
+      elements.bestsellerText.value = state.bestsellerText;
+      elements.step1Text.value = state.step1Text;
+      elements.step2Text.value = state.step2Text;
+      elements.step3Text.value = state.step3Text;
+      elements.authorName.value = state.authorName;
+      elements.authorWebsite.value = state.authorWebsite;
+      elements.authorImage.value = state.authorImage;
+      elements.productImage.value = state.productImage;
+      elements.backgroundColor.value = state.backgroundColor;
+      elements.digitalTextColor.value = state.digitalTextColor;
+      elements.gradientStart.value = state.gradientStart;
+      elements.gradientEnd.value = state.gradientEnd;
+
+      // Update preview
+      updatePreview();
+
+      // Feedback
+      const button = elements.resetBtn;
+      const originalText = button.textContent;
+      button.textContent = 'Reset Complete!';
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 1500);
+    }
+
+    // Image error handling
+    function setupImageErrorHandling() {
+      elements.productImageEl.addEventListener('error', () => {
+        console.warn('Product image failed to load, using fallback');
+        elements.productImageEl.src = "https://cdn.builder.io/api/v1/image/assets/TEMP/e3ee34221ad0e3b583e184808ab92b49ee6e7ce8?width=604";
+      });
+
+      elements.authorImageEl.addEventListener('error', () => {
+        console.warn('Author image failed to load, using fallback');
+        elements.authorImageEl.src = "https://avatars.githubusercontent.com/u/192521042?v=4";
+      });
+    }
+
+    // Utility functions
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Initialize application
+    function initializeApp() {
+      cacheElements();
+      initializeTabs();
+      setupInputHandlers();
+      setupImageErrorHandling();
+      updatePreview();
+
+      // Setup button handlers
+      elements.downloadBtn.addEventListener('click', downloadCard);
+      elements.resetBtn.addEventListener('click', resetToDefaults);
+
+      console.log('Bestseller Card Customizer initialized successfully!');
+    }
+
+    // Start application when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
+  </script>
+</body>
+</html>
